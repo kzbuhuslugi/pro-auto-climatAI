@@ -6,6 +6,22 @@ import fs from 'node:fs/promises';
 import { GoogleGenAI } from '@google/genai';
 
 const app = express();
+
+// Allow the GitHub Pages frontend to call this API from the browser.
+const allowedOrigins = new Set([
+  'https://kzbuhuslugi.github.io'
+]);
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (origin && allowedOrigins.has(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  }
+  if (req.method === 'OPTIONS') return res.sendStatus(204);
+  next();
+});
 const PORT = process.env.PORT || 10000;
 const MAX_FILE_SIZE = 200 * 1024 * 1024; // 200 MB for the first test version
 const upload = multer({
