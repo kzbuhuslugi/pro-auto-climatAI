@@ -26,64 +26,61 @@
     .item:last-child{border:0}.empty{color:var(--muted);font-size:14px}
     label{display:block;font-size:14px;font-weight:650;margin:12px 0 7px}
     select,input[type=text]{width:100%;background:#101a29;color:white;border:1px solid var(--line);border-radius:10px;padding:12px;font:inherit}
-    .status{font-size:13px;color:#86efac;min-height:20px;margin-top:8px}
+    .status{font-size:13px;color:#86efac;min-height:20px;margin-top:8px;white-space:pre-wrap}
     .notice{font-size:12px;color:#a9bacd;background:#101a29;border-radius:10px;padding:11px;line-height:1.45}
     footer{text-align:center;color:#718096;font-size:12px;padding:18px}
     audio{width:100%;margin-top:10px}
+    .resultbox{background:#101a29;border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:12px;white-space:pre-wrap;line-height:1.5;font-size:14px;overflow-wrap:anywhere}
+    .moment{border-bottom:1px solid var(--line);padding:10px 0}.moment:last-child{border:0}
   </style>
 </head>
 <body>
 <main>
-  <header><div class="brand">PRO AUTO CLIMAT</div><div class="tag">AI REELS · MVP 0.1</div></header>
+  <header><div class="brand">PRO AUTO CLIMAT</div><div class="tag">AI REELS · MVP 0.2</div></header>
   <h1>Твой ИИ-монтажёр</h1>
-  <p>Добавь материалы одного ремонта. Подготовим проект рекламного Reels для Instagram.</p>
-
+  <p>Добавь материалы одного ремонта. ИИ проанализирует видео и предложит лучшие фрагменты для рекламного Reels.</p>
   <section class="panel">
     <div class="section-title">🎬 Видео ремонта</div>
     <input id="videos" type="file" accept="video/*" multiple>
-    <div id="videoCount" class="counter">Видео не выбраны</div>
-    <div id="videoList"></div>
+    <div id="videoCount" class="counter">Видео не выбраны</div><div id="videoList"></div>
+    <div class="notice" style="margin-top:10px">Для первого теста выбери одно видео MP4 размером до 200 МБ. Оно будет отправлено на сервер Render и в Gemini для анализа.</div>
   </section>
-
   <section class="panel">
     <div class="section-title">📸 Фотографии</div>
     <input id="photos" type="file" accept="image/*" multiple>
-    <div id="photoCount" class="counter">Фотографии не выбраны</div>
-    <div id="photoList"></div>
+    <div id="photoCount" class="counter">Фотографии не выбраны</div><div id="photoList"></div>
   </section>
-
   <section class="panel">
     <div class="section-title">🎙️ Твой голос</div>
     <div class="hint">Запиши короткий комментарий к ремонту. Например: что сломалось и что было сделано.</div>
-    <div class="row">
-      <button id="record" class="secondary">● Записать</button>
-      <button id="stop" class="secondary" disabled>■ Остановить</button>
-    </div>
+    <div class="row"><button id="record" class="secondary">● Записать</button><button id="stop" class="secondary" disabled>■ Остановить</button></div>
     <div id="recordStatus" class="status">Запись ещё не создана</div>
     <audio id="voicePreview" controls hidden></audio>
-    <div class="notice">На этом этапе приложение сохраняет твою реальную запись. Клонирование голоса и генерация новых фраз твоим голосом подключаются отдельно — только с твоего согласия.</div>
+    <div class="notice">Сохраняется твоя настоящая запись. Клонирование голоса и генерация новых фраз будут отдельной функцией.</div>
   </section>
-
   <section class="panel">
     <div class="section-title">⚙️ Параметры Reels</div>
     <label for="duration">Длительность</label>
     <select id="duration"><option value="30">Около 30 секунд</option><option value="45" selected>Около 45 секунд</option><option value="60">Около 60 секунд</option></select>
     <label for="tone">Стиль</label>
     <select id="tone"><option>Рекламный, динамичный, с юмором</option><option>Профессиональный и серьёзный</option><option>Максимально эмоциональный и вирусный</option></select>
-    <label for="service">Что ремонтировали?</label>
-    <input id="service" type="text" placeholder="Например: замена радиатора печки Pajero 4">
-    <label for="contact">Контакт в конце ролика</label>
-    <input id="contact" type="text" value="Pro Auto Climat · Дмитрий · 87074310456">
+    <label for="service">Что ремонтировали?</label><input id="service" type="text" placeholder="Например: замена радиатора печки Pajero 4">
+    <label for="contact">Контакт в конце ролика</label><input id="contact" type="text" value="Pro Auto Climat · Дмитрий · 87074310456">
   </section>
-
+  <section class="panel">
+    <div class="section-title">🤖 Анализ видео Gemini</div>
+    <div class="notice">Первая версия анализирует одно выбранное видео и возвращает описание, лучшие моменты с таймкодами, заголовок и идею озвучки. Готовый MP4 пока не создаётся.</div>
+    <button id="analyze">Анализировать видео</button>
+    <div id="analysisStatus" class="status" aria-live="polite"></div>
+    <div id="analysisResult" class="resultbox" hidden></div>
+  </section>
   <section class="panel">
     <div class="section-title">✨ Подготовить проект монтажа</div>
-    <div class="notice">Первая версия собирает материалы и формирует техническое задание для ИИ. Автоматический анализ содержания, подбор лучших фрагментов и экспорт готового MP4 будут следующим этапом после подключения ИИ и видеодвижка.</div>
     <button id="create">Создать проект</button>
     <div id="result" class="status" aria-live="polite"></div>
-    <button id="download" class="secondary" hidden>Скачать файл проекта</button>
+    <button id="download" class="secondary" hidden>Скачать файл проекта JSON</button>
   </section>
-  <footer>PRO AUTO CLIMAT AI · Локальная подготовка материалов на телефоне</footer>
+  <footer>PRO AUTO CLIMAT AI · MVP 0.2 · Анализ через интернет, подготовка проекта на телефоне</footer>
 </main>
 <script src="app.js"></script>
 </body>
